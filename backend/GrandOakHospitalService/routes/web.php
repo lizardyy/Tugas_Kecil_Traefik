@@ -13,6 +13,11 @@
 |
 */
 
-$router->get('/grandoak', function () use ($router) {
-    return "This is Grand Oak Hospital Service";
+// $router->get('/grandoak', function () use ($router) {
+//     return "This is Grand Oak Hospital Service";
+// });
+$router->group(['prefix' => 'grandoak'], function () use ($router) {
+    $router->get('/', 'GrandOakHospitalController@index');
+    $router->get('/getdoctor/{doctorType}', 'GrandOakHospitalController@getDoctor');
+
 });

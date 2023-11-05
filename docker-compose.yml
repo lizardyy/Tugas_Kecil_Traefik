@@ -13,7 +13,7 @@ services:
     depends_on:
       - traefik
       - grandoak
-      - pinevaley
+      - pinevalley
 
   mysql:
     image: mariadb:10.6
@@ -57,16 +57,29 @@ services:
       - traefik
       - mysql
   
-  pinevaley:
+  # pinevaley:
+  #   build:
+  #     context: ./dockerfiles
+  #     dockerfile: pinevaley.dockerfile
+  #   ports:
+  #     - "8083:8083"
+  #   volumes:
+  #     - ./backend/PineValeyHospitalService:/var/www/html
+  #   labels:
+  #     - "traefik.http.routers.pinevaley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevaley`))"
+  #   depends_on:
+  #     - traefik
+  #     - mysql
+  pinevalley:
     build:
       context: ./dockerfiles
-      dockerfile: pinevaley.dockerfile
+      dockerfile: node.dockerfile
     ports:
       - "8083:8083"
     volumes:
-      - ./backend/PineValeyHospitalService:/var/www/html
+      - ./backend/PineValleyHospitalService:/usr/src/app
     labels:
-      - "traefik.http.routers.pinevaley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevaley`))"
+      - "traefik.http.routers.pinevalley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevalley`))"
     depends_on:
       - traefik
       - mysql
