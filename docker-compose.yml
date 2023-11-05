@@ -1,0 +1,93 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ./dockerfiles
+      dockerfile: javascript.dockerfile
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./frontend:/var/www/html
+    labels:
+      - "traefik.http.routers.site.rule=Host(`app.localhost`)"
+    depends_on:
+      - traefik
+      - grandoak
+      - pinevaley
+
+  mysql:
+    image: mariadb:10.6
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+
+  # grandoak:
+  #   build:
+  #     context: ./dockerfiles
+  #     dockerfile: php.dockerfile
+  #   ports:
+  #     - "8082:8082"
+  #   volumes:
+  #     - ./backend/GrandOakHospitalService:/var/www/html
+  #   labels:
+  #     - "traefik.http.routers.grandoak.rule=(Host(`app.localhost`) && PathPrefix(`/grandoak`))"
+  #   depends_on:
+  #     - traefik
+  #     - mysql
+
+  grandoak:
+    build:
+      context: ./dockerfiles
+      dockerfile: grandoak.dockerfile
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./backend/GrandOakHospitalService:/var/www/html
+    labels:
+      - "traefik.http.routers.grandoak.rule=(Host(`app.localhost`) && PathPrefix(`/grandoak`))"
+    depends_on:
+      - traefik
+      - mysql
+  
+  pinevaley:
+    build:
+      context: ./dockerfiles
+      dockerfile: pinevaley.dockerfile
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./backend/PineValeyHospitalService:/var/www/html
+    labels:
+      - "traefik.http.routers.pinevaley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevaley`))"
+    depends_on:
+      - traefik
+      - mysql
+
+  traefik:
+    image: traefik:v2.9
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8084:80"  # You can access phpMyAdmin at http://localhost:8083
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: secret
+    depends_on:
+      - mysql
+    labels:
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.localhost`)"
