@@ -9,11 +9,11 @@ app.get('/', (req, res) => {
     res.send('Hello World')
 });
 
-app.get('/pinevaley', (req, res) => {
+app.get('/pinevalley', (req, res) => {
     res.send("This is Pine Valley Hospital Service")
 });
 
-app.post('/pinevaley/getdoctor', (req, res) => {
+app.post('/pinevalley/getdoctor', (req, res) => {
     try {
         const doctorType = req.body.doctorType;
         if (doctorType == 'Ophthalmologist') {

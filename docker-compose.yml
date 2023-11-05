@@ -29,24 +29,10 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
 
-  # grandoak:
-  #   build:
-  #     context: ./dockerfiles
-  #     dockerfile: php.dockerfile
-  #   ports:
-  #     - "8082:8082"
-  #   volumes:
-  #     - ./backend/GrandOakHospitalService:/var/www/html
-  #   labels:
-  #     - "traefik.http.routers.grandoak.rule=(Host(`app.localhost`) && PathPrefix(`/grandoak`))"
-  #   depends_on:
-  #     - traefik
-  #     - mysql
-
   grandoak:
     build:
       context: ./dockerfiles
-      dockerfile: grandoak.dockerfile
+      dockerfile: lumen.dockerfile
     ports:
       - "8082:8082"
     volumes:
@@ -57,19 +43,6 @@ services:
       - traefik
       - mysql
   
-  # pinevaley:
-  #   build:
-  #     context: ./dockerfiles
-  #     dockerfile: pinevaley.dockerfile
-  #   ports:
-  #     - "8083:8083"
-  #   volumes:
-  #     - ./backend/PineValeyHospitalService:/var/www/html
-  #   labels:
-  #     - "traefik.http.routers.pinevaley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevaley`))"
-  #   depends_on:
-  #     - traefik
-  #     - mysql
   pinevalley:
     build:
       context: ./dockerfiles
