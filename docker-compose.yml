@@ -10,6 +10,7 @@ services:
       - ./frontend:/var/www/html
     labels:
       - "traefik.http.routers.site.rule=Host(`app.localhost`)"
+      - "traefik.http.routers.site.middlewares=auth-user@docker"
     depends_on:
       - traefik
       - grandoak
@@ -39,6 +40,7 @@ services:
       - ./backend/GrandOakHospitalService:/var/www/html
     labels:
       - "traefik.http.routers.grandoak.rule=(Host(`app.localhost`) && PathPrefix(`/grandoak`))"
+      - "traefik.http.routers.grandoak.middlewares=auth-user@docker"
     depends_on:
       - traefik
       - mysql
@@ -53,6 +55,7 @@ services:
       - ./backend/PineValleyHospitalService:/usr/src/app
     labels:
       - "traefik.http.routers.pinevalley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevalley`))"
+      - "traefik.http.routers.pinevalley.middlewares=auth-user@docker"
     depends_on:
       - traefik
       - mysql
@@ -65,6 +68,11 @@ services:
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.http.middlewares.auth-user.basicauth.users=test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG"  # test:test
   
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

@@ -38,7 +38,7 @@ pada kedua service terdapat 3 category doctorType yaitu
 - Physician
 - Pediatrician
 
-untuk **Grand Oak Hospital Service**, request dapat dilakukan dengan cara
+Semua request perlu melampirkan authorization di header, bertipe Basic dengan username dan password test (Authorization: Basic dGVzdDp0ZXN0). Untuk **Grand Oak Hospital Service**, request dapat dilakukan dengan cara
 
 ```GET http://app.localhost/grandoak/getdoctor/<doctorType>```
 
