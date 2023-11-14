@@ -14,7 +14,8 @@ services:
     depends_on:
       - traefik
       - grandoak
-      - pinevalley
+      - pinevalley-1
+      - pinevalley-2
 
   mysql:
     image: mariadb:10.6
@@ -45,17 +46,40 @@ services:
       - traefik
       - mysql
   
-  pinevalley:
+  pinevalley-1:
     build:
       context: ./dockerfiles
       dockerfile: node.dockerfile
     ports:
       - "8083:8083"
+    environment:
+      - INSTANCE_NUMBER=1
+      - PORT=8083
     volumes:
       - ./backend/PineValleyHospitalService:/usr/src/app
     labels:
       - "traefik.http.routers.pinevalley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevalley`))"
       - "traefik.http.routers.pinevalley.middlewares=auth-user@docker"
+      - "traefik.http.services.pinevalley-service.loadbalancer.server.port=8083"
+    depends_on:
+      - traefik
+      - mysql
+  
+  pinevalley-2:
+    build:
+      context: ./dockerfiles
+      dockerfile: node.dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - INSTANCE_NUMBER=2
+      - PORT=8084
+    volumes:
+      - ./backend/PineValleyHospitalService:/usr/src/app
+    labels:
+      - "traefik.http.routers.pinevalley.rule=(Host(`app.localhost`) && PathPrefix(`/pinevalley`))"
+      - "traefik.http.routers.pinevalley.middlewares=auth-user@docker"
+      - "traefik.http.services.pinevalley-service.loadbalancer.server.port=8084"
     depends_on:
       - traefik
       - mysql
@@ -77,7 +101,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-      - "8084:80"  # You can access phpMyAdmin at http://localhost:8083
+      - "8085:80"  # You can access phpMyAdmin at http://localhost:8083
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: secret

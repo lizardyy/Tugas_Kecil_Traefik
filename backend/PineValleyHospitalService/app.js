@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const PORT = 8083
+const PORT = process.env.PORT
 const HOST = '0.0.0.0'
 
 app.use(express.json()); // Add this line to enable JSON parsing
@@ -31,7 +31,8 @@ app.post('/pinevalley/getdoctor', (req, res) => {
                             "hospital": "pineValley"
                         }
                     ]
-                }
+                },
+                "instance": `pinevalley-${process.env.INSTANCE_NUMBER}`
             };
             res.json(doctors);
         }
@@ -50,7 +51,8 @@ app.post('/pinevalley/getdoctor', (req, res) => {
                             "hospital": "pineValley"
                         }
                     ]
-                }
+                },
+                "instance": `pinevalley-${process.env.INSTANCE_NUMBER}`
             };
             res.json(doctors);
         }
@@ -69,8 +71,10 @@ app.post('/pinevalley/getdoctor', (req, res) => {
                             "hospital": "pineValley"
                         }
                     ]
-                }
+                },
+                "instance": `pinevalley-${process.env.INSTANCE_NUMBER}`
             };
+
             res.json(doctors);
         }
         else {
