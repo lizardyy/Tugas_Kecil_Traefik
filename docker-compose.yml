@@ -1,5 +1,6 @@
 version: '3'
 services:
+# Frontend
   app:
     build:
       context: ./dockerfiles
@@ -17,6 +18,7 @@ services:
       - pinevalley-1
       - pinevalley-2
 
+# MySQL
   mysql:
     image: mariadb:10.6
     restart: unless-stopped
@@ -31,6 +33,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
 
+# Grand Oak Hospital Service
   grandoak:
     build:
       context: ./dockerfiles
@@ -45,7 +48,8 @@ services:
     depends_on:
       - traefik
       - mysql
-  
+
+# Pine Valley Hospital Services
   pinevalley-1:
     build:
       context: ./dockerfiles
@@ -84,6 +88,7 @@ services:
       - traefik
       - mysql
 
+# Traefik
   traefik:
     image: traefik:v2.9
     command: --api.insecure=true --providers.docker
@@ -92,16 +97,18 @@ services:
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  
+
+# Middleware authentication
   whoami:
     image: traefik/whoami
     labels:
       - "traefik.http.middlewares.auth-user.basicauth.users=test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG"  # test:test
-  
+
+# phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-      - "8085:80"  # You can access phpMyAdmin at http://localhost:8083
+      - "8085:80"  # You can access phpMyAdmin at http://localhost:8085
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: secret
