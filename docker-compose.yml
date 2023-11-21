@@ -1,5 +1,21 @@
 version: '4'
 services:
+# Traefik
+  traefik:
+    image: traefik:v2.9
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# Middleware authentication
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.http.middlewares.auth-user.basicauth.users=test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG"  # test:test
+      
 # Grand Oak Hospital Service
   grandoak:
     build:
@@ -51,22 +67,6 @@ services:
       - "traefik.http.services.pinevalley-service.loadbalancer.server.port=8084"
     depends_on:
       - traefik
-
-# Traefik
-  traefik:
-    image: traefik:v2.9
-    command: --api.insecure=true --providers.docker
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
-# Middleware authentication
-  whoami:
-    image: traefik/whoami
-    labels:
-      - "traefik.http.middlewares.auth-user.basicauth.users=test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG"  # test:test
 
 # Frontend
   app:
